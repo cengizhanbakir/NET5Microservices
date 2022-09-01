@@ -1,4 +1,5 @@
-﻿using FreeCourse.Services.Catalog.Services;
+﻿using FreeCourse.Services.Catalog.Dtos;
+using FreeCourse.Services.Catalog.Services;
 using FreeCourse.Shared.ControllerBases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,6 @@ namespace FreeCourse.Services.Catalog.Controllers
         {
             _courseService = courseService;
         }
-
 
         public async Task<IActionResult> GetAll()
         {
@@ -42,5 +42,26 @@ namespace FreeCourse.Services.Catalog.Controllers
             return CreateActionResultInstance(response);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create(CourseCreateDto courseCreateDto)
+        {
+            var response = await _courseService.CreateAsync(courseCreateDto);
+            return CreateActionResultInstance(response);
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Update(CourseUpdateDto courseUpdateDto)
+        {
+            var response = await _courseService.UpdateAsync(courseUpdateDto);
+            return CreateActionResultInstance(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var response = await _courseService.DeleteAsync(id);
+            return CreateActionResultInstance(response);
+        }
     }
 }
