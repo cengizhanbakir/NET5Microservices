@@ -1,4 +1,5 @@
 ﻿using FreeCourse.Services.Catalog.Services;
+using FreeCourse.Shared.ControllerBases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,13 +11,19 @@ namespace FreeCourse.Services.Catalog.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    internal class CoursesController : ControllerBase
+    internal class CoursesController : CustomBaseController
     {
         private readonly ICourseService _courseService;
 
         public CoursesController(ICourseService courseService)
         {
             _courseService = courseService;
+        }
+
+        public async Task<IActionResult> GetById(string id)
+        {
+            var response = await _courseService.GetByIdAsync(id);
+            return CreateActionResultInstance(response);
         }
 
 
