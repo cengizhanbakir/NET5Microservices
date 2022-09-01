@@ -50,5 +50,18 @@ namespace FreeCourse.Services.Catalog.Services
             return Response<List<CourseDto>>.Success(_mapper.Map<List<CourseDto>>(courses), 200);
 
         }
+
+        public async Task<Response<CourseDto>> GetByIdAsync(string id)
+        {
+            var course = await _courseCollection.Find<Course>(x => x.Id == id).FirstOrDefaultAsync();
+            if (course == null)
+            {
+                return Response<CourseDto>.Fail("Kurs bulunamadı", 404);
+            }
+
+            course.Category = await _categoryCollection.Find<Category>(x => x.Id == id).FirstOrDefaultAsync();
+
+            return Response<CourseDto>.Success(_mapper.Map<CourseDto>(course), 200);
+        }
     }
 }
