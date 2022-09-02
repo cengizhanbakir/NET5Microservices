@@ -2,7 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using FreeCourse.IdentityServer.Data;
+using FreeCourse.IdentityServer.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,10 +40,27 @@ namespace FreeCourse.IdentityServer
                 .CreateLogger();
 
             try
-            {              
+            {
 
                 var host = CreateHostBuilder(args).Build();
-                
+
+                using (var scope = host.Services.CreateScope())
+                {
+                    var serviceProvider = scope.ServiceProvider;
+                    var applicationDbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
+                    //Veritabanı yoksa oluştur, uygulanmamış migration var ise uygula.
+                    applicationDbContext.Database.Migrate();
+
+                    //Veritabanın bir kullanıcı yok ise oluştur.
+                    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                    
+                    if (!userManager.Users.Any())
+                    {
+                        //Wait ile senkron olarak çalışmasını sağladık.
+                        userManager.CreateAsync(new ApplicationUser { UserName = "cbakir", Email = "deneme@deneme.com", City = "New York" }, "Password111*").Wait();
+                    }
+                }
 
 
                 Log.Information("Starting host...");
