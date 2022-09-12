@@ -1,2 +1,4 @@
 Services Port
 	-catalogAPI=>5011
+	-photostockAPI=>5012
+identityServer=>5001
